@@ -12,18 +12,32 @@ class GrafoRecomendacao {
         conectarUsuariosPorTags(usuario);
     }
 
+    private int contarTagsEmComum(Usuario user1, Usuario user2) {
+        int contador = 0;
+        for (String tag : user1.getTags()) {
+            if (user2.getTags().contains(tag)) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+
     private void conectarUsuariosPorTags(Usuario novoUsuario) {
         for (Usuario usuario : usuarios) {
-            if (!usuario.equals(novoUsuario) && temTagsEmComum(novoUsuario, usuario)) {
-                novoUsuario.getArestas().add(usuario);
-                usuario.getArestas().add(novoUsuario);
+            if (!usuario.equals(novoUsuario)) {
+                int tagsEmComum = contarTagsEmComum(novoUsuario, usuario);
+                if (tagsEmComum > 0) {
+                    novoUsuario.getArestas().add(new Arestas(usuario, tagsEmComum));
+                    usuario.getArestas().add(new Arestas(novoUsuario, tagsEmComum));
+                }
             }
         }
     }
 
+
     public LinkedList<String> recomendarProdutos(Usuario usuario, LinkedList<Produto> produtos) {
         LinkedList<String> recomendacoes = new LinkedList<>();
-        LinkedList<Usuario> arestas = usuario.getArestas();
+        LinkedList<Arestas> arestas = usuario.getArestas();
         LinkedList<Produto> produtosPrioritarios = new LinkedList<>();
         LinkedList<Produto> produtosNaoPrioritarios = new LinkedList<>();
 
@@ -31,30 +45,29 @@ class GrafoRecomendacao {
         //MESMA TAG APARECERÃO COMO PRIORITÁRIOS E NA LISTA FICARÃO ANTES DOS OUTROS
 
         for (Produto produto : produtos) {
-            if (usuario.getTags().containsAll(produto.getTags()) && !produtosPrioritarios.contains(produto)) {
+            if (usuario.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
                 produtosPrioritarios.add(produto);
             }
         }
 
-        for (Usuario aresta : arestas) {
+        for (Arestas aresta : arestas) {
+            Usuario usuarioC = aresta.getUsuario();
             for (Produto produto : produtos) {
-                if (aresta.getTags().containsAll(produto.getTags()) && !produtosPrioritarios.contains(produto)) {
+                if (usuarioC.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
                     produtosNaoPrioritarios.add(produto);
                 }
             }
         }
 
-
         for (Produto p : produtosPrioritarios) {
             recomendacoes.add(p.nome);
         }
-
-
         for (Produto p : produtosNaoPrioritarios) {
-            System.out.println(p.nome);
+            recomendacoes.add(p.nome);
         }
 
         return recomendacoes;
+
     }
 
     private boolean temTagsEmComum(Usuario u1, Usuario u2) {
@@ -66,7 +79,4 @@ class GrafoRecomendacao {
         return false;
     }
 
-    public LinkedList<Usuario> getUsuarios() {
-        return usuarios;
-    }
 }

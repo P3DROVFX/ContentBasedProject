@@ -2,7 +2,6 @@ import java.util.LinkedList;
 
 public class Main {
     public static void main(String[] args) {
-        // Criando usuários
         Usuario usuario1 = new Usuario("Pedro");
         usuario1.adicionarTag("geladeira");
         usuario1.adicionarTag("fogao");
@@ -28,7 +27,6 @@ public class Main {
         usuario6.adicionarTag("air fryer");
 
 
-        // Criando grafo e adicionando usuários
         GrafoRecomendacao grafo = new GrafoRecomendacao();
         grafo.adicionarUsuario(usuario1);
         grafo.adicionarUsuario(usuario2);
@@ -38,7 +36,6 @@ public class Main {
         grafo.adicionarUsuario(usuario6);
 
 
-        // Criando músicas
         Produto produto1 = new Produto("Geladeira Brastemp");
         produto1.adicionarTag("geladeira");
 
@@ -77,9 +74,8 @@ public class Main {
         produtos.add(produto8);
         produtos.add(produto9);
 
-        // Recomendando músicas para o usuário 1
-        LinkedList<String> recomendacoes = grafo.recomendarProdutos(usuario5, produtos);
-        System.out.println("Produtos recomendadas para " + usuario5 + ": " + recomendacoes);
+        LinkedList<String> recomendacoes = grafo.recomendarProdutos(usuario6, produtos);
+        System.out.println("Produtos recomendadas para " + usuario6 + ": " + recomendacoes);
 
 
     }

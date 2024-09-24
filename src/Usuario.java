@@ -3,7 +3,7 @@ import java.util.LinkedList;
 class Usuario {
     String nome;
     LinkedList<String> tags;
-    LinkedList<Usuario> arestas;
+    LinkedList<Arestas> arestas;
 
     public Usuario(String nome) {
         this.nome = nome;
@@ -19,7 +19,7 @@ class Usuario {
         return tags;
     }
 
-    public LinkedList<Usuario> getArestas() {
+    public LinkedList<Arestas> getArestas() {
         return arestas;
     }
 
