@@ -1,8 +1,8 @@
 import java.util.LinkedList;
 
 class Usuario {
-    String nome;
-    LinkedList<String> tags;
+    String nome; //NOME DO USUÁRIO
+    LinkedList<String> tags;  //as tags que cada usuário vai receber
     LinkedList<Arestas> arestas;
 
     public Usuario(String nome) {

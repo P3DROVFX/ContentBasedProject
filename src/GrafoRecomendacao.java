@@ -12,6 +12,7 @@ public class GrafoRecomendacao {
         conectarUsuariosPorTags(usuario);
     }
 
+    //CONTA QUANTAS ARESTAS POSSUEM ENTRE DOIS USUÁRIOS,
     private int contarTagsEmComum(Usuario user1, Usuario user2) {
         int contador = 0;
         for (String tag : user1.getTags()) {
@@ -22,6 +23,7 @@ public class GrafoRecomendacao {
         return contador;
     }
 
+    //FAZ A CONEXÃO DO GRAFO ENTRE USUÁRIOS E PRODUTOS
     private void conectarUsuariosPorTags(Usuario novoUsuario) {
         for (Usuario usuario : usuarios) {
             if (!usuario.equals(novoUsuario)) {
@@ -41,33 +43,66 @@ public class GrafoRecomendacao {
         LinkedList<Produto> produtosPrioritarios = new LinkedList<>();
         LinkedList<Produto> produtosNaoPrioritarios = new LinkedList<>();
 
-        //TEMOS UMA LISTA DE PRODUTOS PRIORITÁRIOS E NÃO PRIORITÁRIOS, TODOS OS PRODUTOS QUE TEM A
-        //MESMA TAG APARECERÃO COMO PRIORITÁRIOS E NA LISTA FICARÃO ANTES DOS OUTROS
 
-        for (Produto produto : produtos) {
-            if (usuario.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
-                produtosPrioritarios.add(produto);
-            }
-        }
-
+        //VERIFICA OS PRODUTOS PRIORITÁRIOS, QUE SÃO OS PRODUTOS COMPRADOS PELOS USUÁRIOS QUE TEM
+        //PRODUTOS EM COMUM COM O USUÁRIO PRINCIPAL
         for (Arestas aresta : arestas) {
             Usuario usuarioC = aresta.getUsuario();
             for (Produto produto : produtos) {
-                if (usuarioC.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
-                    produtosNaoPrioritarios.add(produto);
+                if (usuarioC.getTags().containsAll(produto.getTagPrincipal())
+                        && !produtosPrioritarios.contains(produto)
+                        && !usuario.getTags().containsAll(produto.getTagPrincipal())) {
+                    produtosPrioritarios.add(produto);
                 }
             }
         }
 
+        //VERIFICA OS PRODUTOS SECUNDÁRIOS, DE NÍVEL 2, QUE ESTÃO CONECTADOS COM OS PRODUTOS
+        //JÁ CONECTADOS DOS USUÁRIOS ANTERIORES
+        for (Arestas aresta : arestas) {
+            Usuario usuarioPrimario = aresta.getUsuario();
+            LinkedList<Arestas> produtosSecundarios = usuarioPrimario.getArestas();
+            for (Arestas arestasSecundarias : produtosSecundarios) {
+                Usuario usuarioSecundario = arestasSecundarias.getUsuario();
+                if (!usuarioSecundario.equals(usuario)) {
+                    for (Produto produto : produtos) {
+                        if (usuarioSecundario.getTags().containsAll(produto.getTagPrincipal())
+                                && !produtosPrioritarios.contains(produto)
+                                && !produtosNaoPrioritarios.contains(produto)) {
+                                produtosNaoPrioritarios.add(produto);
+                        }
+                    }
+                }
+            }
+        }
+
+        //ADICIONA TODOS OS PRODUTOS EM UMA LISTA SÓ EM ORDEM
         for (Produto p : produtosPrioritarios) {
             recomendacoes.add(p.nome);
         }
+
         for (Produto p : produtosNaoPrioritarios) {
             recomendacoes.add(p.nome);
         }
 
-        return recomendacoes;
+        //IMPRIME OS PRODUTOS PRIORITÁRIOS
+        if (!produtosPrioritarios.isEmpty()) {
+            System.out.print("Produtos Prioritários: ");
+            for (int i = 0; i < produtosPrioritarios.size(); i++) {
+                System.out.print(produtosPrioritarios.get(i).getNome() + " | ");
+            }
+            System.out.println();
+        }
 
+        //IMPRIME OS PRODUTOS SECUNDÁRIOS
+        if (!produtosNaoPrioritarios.isEmpty()) {
+            System.out.print("Produtos Secundários: ");
+            for (int i = 0; i < produtosNaoPrioritarios.size(); i++) {
+                System.out.print(produtosNaoPrioritarios.get(i).getNome() + " | ");
+            }
+            System.out.println();
+        }
+        return recomendacoes;
     }
 
     private boolean temTagsEmComum(Usuario u1, Usuario u2) {
@@ -102,40 +137,4 @@ public class GrafoRecomendacao {
         }
     }
 
-    //FUNCAO PARA IMPRIMIR MAIS BONITINHO AS ARESTAS (PRODUTOS)
-    public void imprimirProdutosRecomendados(Usuario usuario, LinkedList<Produto> produtos) {
-        LinkedList<Produto> produtosPrioritarios = new LinkedList<>();
-        LinkedList<Produto> produtosNaoPrioritarios = new LinkedList<>();
-
-        for (Produto produto : produtos) {
-            if (usuario.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
-                produtosPrioritarios.add(produto);
-            }
-        }
-
-        for (Arestas aresta : usuario.getArestas()) {
-            Usuario usuarioConectado = aresta.getUsuario();
-            for (Produto produto : produtos) {
-                if (usuarioConectado.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
-                    produtosNaoPrioritarios.add(produto);
-                }
-            }
-        }
-
-        if (!produtosPrioritarios.isEmpty()) {
-            System.out.print("Produtos Prioritários: ");
-            for (int i = 0; i < produtosPrioritarios.size(); i++) {
-                System.out.print(produtosPrioritarios.get(i).getNome() + " | ");
-            }
-            System.out.println();
-        }
-
-        if (!produtosNaoPrioritarios.isEmpty()) {
-            System.out.print("Produtos Secundários: ");
-            for (int i = 0; i < produtosNaoPrioritarios.size(); i++) {
-                System.out.print(produtosNaoPrioritarios.get(i).getNome() + " | ");
-            }
-            System.out.println();
-        }
-    }
 }

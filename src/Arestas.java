@@ -2,7 +2,7 @@ import java.util.LinkedList;
 
 public class Arestas {
     Usuario usuario;
-    public int peso;
+    public int peso; //APENAS PRA INDICAR SE ESTÁCONECTADA A OUTROS VÉRTICES
 
     public Arestas(Usuario usuario, int peso) {
         this.usuario = usuario;
@@ -12,9 +12,4 @@ public class Arestas {
     public Usuario getUsuario() {
         return usuario;
     }
-
-    public int getPeso() {
-        return peso;
-    }
-
 }

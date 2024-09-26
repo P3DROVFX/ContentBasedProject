@@ -14,8 +14,6 @@ public class Main {
             LinkedList<String> recomendacoes = grafo.recomendarProdutos(grafo.getUsuario(entrada), produtos);
             System.out.println("\n--- LOG DE CONEXOES ---");
             grafo.imprimirConexoes();
-            System.out.println("\nProdutos recomendados para " + entrada + ": ");
-            grafo.imprimirProdutosRecomendados(grafo.getUsuario(entrada), produtos);
             scanner.close();
         } catch (NullPointerException e) {
             System.out.println("Usuário não encontrado");
@@ -23,6 +21,9 @@ public class Main {
 
     }
 
+    //FUNCOES PARA EVITAR REPETIÇÃO DE CÓDIGO
+
+    //LISTA DE USUÁRIOS, PRIMEIRO VEM O NOME DO USUÁRIO EM MINUSCULO E DEPOIS AS TAGS DOS PRODUTOS QUE ELE COMPROU
     private static void adicionarUsuarios(GrafoRecomendacao grafo) {
         String[][] usuariosTags = {
                 {"pedro", "geladeira", "fogao"},
@@ -32,7 +33,10 @@ public class Main {
                 {"maria", "cama", "notebook"},
                 {"laura", "monitor", "cama", "air fryer"},
                 {"rafael", "teclado"},
-                {"matheus", "celular", "notebook"}
+                {"matheus", "celular", "notebook"},
+                {"roberto", "air fryer", "teclado"},
+                {"fernanda", "cadeira", "celular"},
+                {"lizandra", "cama", "geladeira"}
         };
 
         for (String[] usuarioTag : usuariosTags) {
@@ -41,19 +45,22 @@ public class Main {
                 usuario.adicionarTag(usuarioTag[i]);
             }
             grafo.adicionarUsuario(usuario);
+
         }
     }
 
+    //LISTA DE PRODUTOS, PRIMEIRO VEM O NOME DO PRODUTO, QUE É GUARDADO APENAS COMO STRING, DEPOIS
+    //VEM A TAG DO PRODUTO, QUE É O QUE VAI SER A ARESTA DE LIGAÇÃO DOS USUÁRIOS
     private static LinkedList<Produto> adicionarProdutos() {
         String[][] produtosTags = {
                 {"Geladeira Brastemp", "geladeira"},
                 {"Fogao 4 bocas", "fogao"},
                 {"Mesa de escritorio", "mesa"},
+                {"Cama ortoruim", "cama"},
                 {"Monitor samsung", "monitor"},
+                {"Monitor LG", "monitor"},
                 {"Cadeira de escritorio", "cadeira"},
                 {"Air Fryer top", "air fryer"},
-                {"Cama ortoruim", "cama"},
-                {"Monitor LG", "monitor"},
                 {"Air Fryer 250w", "air fryer"},
                 {"Teclado Skyloong 60%", "teclado"},
                 {"Notebook Lenovo Ideapad 3", "notebook"},
