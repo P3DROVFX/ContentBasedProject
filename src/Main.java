@@ -1,82 +1,74 @@
 import java.util.LinkedList;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        Usuario usuario1 = new Usuario("Pedro");
-        usuario1.adicionarTag("geladeira");
-        usuario1.adicionarTag("fogao");
+    public static void main(String[] args) throws NullPointerException {
+        try {
+            GrafoRecomendacao grafo = new GrafoRecomendacao();
+            adicionarUsuarios(grafo);
+            LinkedList<Produto> produtos = adicionarProdutos();
+            Scanner scanner = new Scanner(System.in);
 
-        Usuario usuario2 = new Usuario("Lucas");
-        usuario2.adicionarTag("mesa");
-        usuario2.adicionarTag("monitor");
-
-        Usuario usuario3 = new Usuario("Ana");
-        usuario3.adicionarTag("cadeira");
-        usuario3.adicionarTag("mesa");
-
-        Usuario usuario4 = new Usuario("Joao");
-        usuario4.adicionarTag("air fryer");
-        usuario4.adicionarTag("fogao");
-
-        Usuario usuario5 = new Usuario("Maria");
-        usuario5.adicionarTag("cama");
-
-        Usuario usuario6 = new Usuario("Laura");
-        usuario6.adicionarTag("monitor");
-        usuario6.adicionarTag("cama");
-        usuario6.adicionarTag("air fryer");
-
-
-        GrafoRecomendacao grafo = new GrafoRecomendacao();
-        grafo.adicionarUsuario(usuario1);
-        grafo.adicionarUsuario(usuario2);
-        grafo.adicionarUsuario(usuario3);
-        grafo.adicionarUsuario(usuario4);
-        grafo.adicionarUsuario(usuario5);
-        grafo.adicionarUsuario(usuario6);
-
-
-        Produto produto1 = new Produto("Geladeira Brastemp");
-        produto1.adicionarTag("geladeira");
-
-        Produto produto2 = new Produto("Fogao 4 bocas");
-        produto2.adicionarTag("fogao");
-
-        Produto produto3 = new Produto("Mesa de escritorio");
-        produto3.adicionarTag("mesa");
-
-        Produto produto4 = new Produto("Monitor samsung");
-        produto4.adicionarTag("monitor");
-
-        Produto produto5 = new Produto("Cadeira de escritorio");
-        produto5.adicionarTag("cadeira");
-
-        Produto produto6 = new Produto("Air Fryer top");
-        produto6.adicionarTag("air fryer");
-
-        Produto produto7 = new Produto("Cama ortoruim");
-        produto7.adicionarTag("cama");
-
-        Produto produto8 = new Produto("Monitor LG");
-        produto8.adicionarTag("monitor");
-
-        Produto produto9 = new Produto("Air Fryer 250w");
-        produto9.adicionarTag("air fryer");
-
-        LinkedList<Produto> produtos = new LinkedList<>();
-        produtos.add(produto1);
-        produtos.add(produto2);
-        produtos.add(produto3);
-        produtos.add(produto4);
-        produtos.add(produto5);
-        produtos.add(produto6);
-        produtos.add(produto7);
-        produtos.add(produto8);
-        produtos.add(produto9);
-
-        LinkedList<String> recomendacoes = grafo.recomendarProdutos(usuario6, produtos);
-        System.out.println("Produtos recomendadas para " + usuario6 + ": " + recomendacoes);
-
+            System.out.print("Informe o nome do usuário: ");
+            String entrada = scanner.nextLine().toLowerCase();
+            LinkedList<String> recomendacoes = grafo.recomendarProdutos(grafo.getUsuario(entrada), produtos);
+            System.out.println("\n--- LOG DE CONEXOES ---");
+            grafo.imprimirConexoes();
+            System.out.println("\nProdutos recomendados para " + entrada + ": ");
+            grafo.imprimirProdutosRecomendados(grafo.getUsuario(entrada), produtos);
+            scanner.close();
+        } catch (NullPointerException e) {
+            System.out.println("Usuário não encontrado");
+        }
 
     }
+
+    private static void adicionarUsuarios(GrafoRecomendacao grafo) {
+        String[][] usuariosTags = {
+                {"pedro", "geladeira", "fogao"},
+                {"lucas", "mesa", "monitor"},
+                {"ana", "cadeira", "mesa"},
+                {"joao", "air fryer", "fogao"},
+                {"maria", "cama", "notebook"},
+                {"laura", "monitor", "cama", "air fryer"},
+                {"rafael", "teclado"},
+                {"matheus", "celular", "notebook"}
+        };
+
+        for (String[] usuarioTag : usuariosTags) {
+            Usuario usuario = new Usuario(usuarioTag[0]);
+            for (int i = 1; i < usuarioTag.length; i++) {
+                usuario.adicionarTag(usuarioTag[i]);
+            }
+            grafo.adicionarUsuario(usuario);
+        }
+    }
+
+    private static LinkedList<Produto> adicionarProdutos() {
+        String[][] produtosTags = {
+                {"Geladeira Brastemp", "geladeira"},
+                {"Fogao 4 bocas", "fogao"},
+                {"Mesa de escritorio", "mesa"},
+                {"Monitor samsung", "monitor"},
+                {"Cadeira de escritorio", "cadeira"},
+                {"Air Fryer top", "air fryer"},
+                {"Cama ortoruim", "cama"},
+                {"Monitor LG", "monitor"},
+                {"Air Fryer 250w", "air fryer"},
+                {"Teclado Skyloong 60%", "teclado"},
+                {"Notebook Lenovo Ideapad 3", "notebook"},
+                {"Notebook dell inspiron", "notebook"},
+                {"Samsung pocket", "celular"},
+                {"Xiaomi redmi note 7", "celular"}
+        };
+
+        LinkedList<Produto> produtos = new LinkedList<>();
+        for (String[] produtoTag : produtosTags) {
+            Produto produto = new Produto(produtoTag[0]);
+            produto.adicionarTag(produtoTag[1]);
+            produtos.add(produto);
+        }
+        return produtos;
+    }
+
 }

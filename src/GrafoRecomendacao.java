@@ -1,6 +1,6 @@
 import java.util.LinkedList;
 
-class GrafoRecomendacao {
+public class GrafoRecomendacao {
     private LinkedList<Usuario> usuarios;
 
     public GrafoRecomendacao() {
@@ -79,4 +79,63 @@ class GrafoRecomendacao {
         return false;
     }
 
+    //PERCORRER A LISTA DE USUÁRIOS PARA PROCURAR O USUÁRIO REQUERIDO
+    public Usuario getUsuario(String nome) {
+        for (Usuario usuario : usuarios) {
+            if (usuario.getNome().equals(nome)) {
+                return usuario;
+            }
+        }
+        return null;
+    }
+
+    //FUNCAO PARA IMPRIMIR AS ARESTAS / ADJACENCIAS DO VERTICES (USUARIOS)
+    public void imprimirConexoes() {
+        int contadorVertices = 1;
+        for (Usuario usuario : usuarios) {
+            System.out.print("Vertice " + contadorVertices + ": " + usuario.getNome());
+            contadorVertices++;
+            for (Arestas aresta : usuario.getArestas()) {
+                System.out.print(" -> " + aresta.getUsuario().getNome());
+            }
+            System.out.println();
+        }
+    }
+
+    //FUNCAO PARA IMPRIMIR MAIS BONITINHO AS ARESTAS (PRODUTOS)
+    public void imprimirProdutosRecomendados(Usuario usuario, LinkedList<Produto> produtos) {
+        LinkedList<Produto> produtosPrioritarios = new LinkedList<>();
+        LinkedList<Produto> produtosNaoPrioritarios = new LinkedList<>();
+
+        for (Produto produto : produtos) {
+            if (usuario.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
+                produtosPrioritarios.add(produto);
+            }
+        }
+
+        for (Arestas aresta : usuario.getArestas()) {
+            Usuario usuarioConectado = aresta.getUsuario();
+            for (Produto produto : produtos) {
+                if (usuarioConectado.getTags().containsAll(produto.getTagPrincipal()) && !produtosPrioritarios.contains(produto)) {
+                    produtosNaoPrioritarios.add(produto);
+                }
+            }
+        }
+
+        if (!produtosPrioritarios.isEmpty()) {
+            System.out.print("Produtos Prioritários: ");
+            for (int i = 0; i < produtosPrioritarios.size(); i++) {
+                System.out.print(produtosPrioritarios.get(i).getNome() + " | ");
+            }
+            System.out.println();
+        }
+
+        if (!produtosNaoPrioritarios.isEmpty()) {
+            System.out.print("Produtos Secundários: ");
+            for (int i = 0; i < produtosNaoPrioritarios.size(); i++) {
+                System.out.print(produtosNaoPrioritarios.get(i).getNome() + " | ");
+            }
+            System.out.println();
+        }
+    }
 }
